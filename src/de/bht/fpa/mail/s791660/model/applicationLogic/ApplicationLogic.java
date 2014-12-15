@@ -9,8 +9,8 @@ import de.bht.fpa.mail.s791660.controller.FXMLDocumentController;
 import de.bht.fpa.mail.s791660.model.Email;
 import de.bht.fpa.mail.s791660.model.Folder;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBContext;
@@ -112,15 +112,24 @@ public class ApplicationLogic implements ApplicationLogicIF{
 
     @Override
     public void saveEmails(File file) {
-        try{
-            FileOutputStream stream = new FileOutputStream(file);
+        try{          
             JAXBContext context = JAXBContext.newInstance(Email.class);
             Folder selectedFolder = (Folder) mainController.getTreeView().getSelectionModel().getSelectedItem().getValue();
             Marshaller marshaller = context.createMarshaller();
-            for(Email mail : selectedFolder.getEmails()){
-                marshaller.marshal(mail, stream);
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            for(int i = 0; i < selectedFolder.getEmails().size(); i++){
+                if(i < 9){
+                    File newMail = new File(file.getAbsolutePath() + "/mail00" + (i+1) + ".xml");
+                    marshaller.marshal(selectedFolder.getEmails().get(i), newMail);
+                }else if(i < 99){
+                    File newMail = new File(file.getAbsolutePath() + "/mail0" + (i+1) + ".xml");
+                    marshaller.marshal(selectedFolder.getEmails().get(i), newMail);
+                }else{
+                    File newMail = new File(file.getAbsolutePath() + "/mail" + (i+1) + ".xml");
+                    marshaller.marshal(selectedFolder.getEmails().get(i), newMail);
+                }
             }
-        }catch(JAXBException | FileNotFoundException e){
+        }catch(JAXBException e){
             System.err.println(e.getMessage());
         }
     }

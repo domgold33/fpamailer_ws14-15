@@ -122,6 +122,10 @@ public class FXMLDocumentController implements Initializable {
                 if (f1.getEmails().isEmpty()) {
                     applicationLogic.loadEmails(f1);
                 }
+                //Making the tree item refresh by reassigning the same value again in order to let the 
+                //email count display next to the folder name.
+                newValue.setValue(null);
+                newValue.setValue(f1);
                 tableData.setAll(f1.getEmails());
                 tableView.setItems(tableData);
                 clearDetailedDisplay();
