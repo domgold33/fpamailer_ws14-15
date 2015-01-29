@@ -110,7 +110,6 @@ public class FXMLDocumentController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // Initializing the TreeView.
         Folder f = new Folder(new File(DEFAULT_ROOT_PATH), true);
         applicationLogic = new ApplicationLogic(f, this);
         //Initializing the Menubar.
@@ -135,6 +134,7 @@ public class FXMLDocumentController implements Initializable {
                 clearDetailedDisplay();
             }
         });
+        // Initializing the TreeView with the default "Google-Test" account.
         applicationLogic.openAccount(DEFAULT_ACCOUNT);
     }  
     
@@ -167,13 +167,7 @@ public class FXMLDocumentController implements Initializable {
                 System.err.println("Failed to open dialog.");
             }
         });
-        for(String accName : applicationLogic.getAllAccounts()){
-            MenuItem account = new MenuItem(accName);
-            openAccountMenu.getItems().add(account);
-            account.setOnAction((event) ->{
-                applicationLogic.openAccount(accName);
-            });
-        }
+        loadAccounts();
     }
     
     /***
@@ -383,16 +377,21 @@ public class FXMLDocumentController implements Initializable {
         newAccountStage.showAndWait();
     }
     
+    /**
+     * Opens a new dialog that allows the user to update the data of a previously chosen account.
+     * @param accName Specifies which account the user wants to edit.
+     * @throws IOException When the dialog failed to open.
+     */
     private void openEditAccountWindow(String accName) throws IOException{
-        URL location = getClass().getResource("/de/bht/fpa/mail/s791660/gui/FXMLEditAccount.fxml");
+        URL location = getClass().getResource("/de/bht/fpa/mail/s791660/gui/FXMLEditAccount2.fxml");
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(location);
-        loader.setController(new FXMLNewAccountController(this.applicationLogic, this));
+        loader.setController(new FXMLEditAccountController(this, accName));
         AnchorPane root = (AnchorPane) loader.load();
         Scene scene = new Scene(root);
         Stage newAccountStage = new Stage();
         newAccountStage.setScene(scene);
-        newAccountStage.setTitle("New Account");
+        newAccountStage.setTitle("Edit Account");
         newAccountStage.showAndWait();
     }
     

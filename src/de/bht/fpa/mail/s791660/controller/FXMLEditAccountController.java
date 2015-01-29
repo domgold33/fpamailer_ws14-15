@@ -35,7 +35,7 @@ public class FXMLEditAccountController implements Initializable{
     @FXML
     private Label errorMessage;
     @FXML
-    private Button saveButton;
+    private Button updateButton;
     @FXML
     private Button cancelButton;
     
@@ -51,7 +51,7 @@ public class FXMLEditAccountController implements Initializable{
         hostTextfield.setText(account.getHost());
         usernameTextfield.setText(account.getUsername());
         passwordTextfield.setText(account.getPassword());
-        saveButton.setOnAction((event) ->{
+        updateButton.setOnAction((event) ->{
             if(!nameTextfield.getText().isEmpty() && !hostTextfield.getText().isEmpty() && 
                 !usernameTextfield.getText().isEmpty() && !passwordTextfield.getText().isEmpty()){
                 account.setHost(this.hostTextfield.getText());

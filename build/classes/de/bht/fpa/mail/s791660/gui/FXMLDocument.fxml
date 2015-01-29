@@ -93,8 +93,8 @@
           <Menu fx:id="accuntMenu" mnemonicParsing="false" text="Account">
                <items>
                   <MenuItem fx:id="newAccountMenuItem" mnemonicParsing="false" text="New Account" />
-                  <MenuItem fx:id="editAccountMenuItem" mnemonicParsing="false" text="Edit Account" />
                   <Menu fx:id="openAccountMenu" mnemonicParsing="false" text="Open Account" />
+                  <Menu fx:id="editAccountMenu" mnemonicParsing="false" text="Edit Account" />
                </items>
           </Menu>
           <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">

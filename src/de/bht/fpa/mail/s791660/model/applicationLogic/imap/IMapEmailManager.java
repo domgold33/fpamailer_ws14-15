@@ -47,7 +47,7 @@ public class IMapEmailManager implements EmailManagerIF{
             return;
         }
         try{
-            javax.mail.Folder folder = store.getFolder(f.getName());
+            javax.mail.Folder folder = store.getFolder(f.getPath());
             if(!folder.isOpen()){
                 folder.open(javax.mail.Folder.READ_ONLY);
             }

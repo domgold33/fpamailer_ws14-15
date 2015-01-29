@@ -5,15 +5,12 @@
  */
 package de.bht.fpa.mail.s791660.model.applicationLogic;
 
-import de.bht.fpa.mail.s791660.model.applicationLogic.xml.FileManager;
-import de.bht.fpa.mail.s791660.model.applicationLogic.xml.EmailManager;
 import de.bht.fpa.mail.s791660.controller.FXMLDocumentController;
 import de.bht.fpa.mail.s791660.model.Account;
 import de.bht.fpa.mail.s791660.model.Email;
 import de.bht.fpa.mail.s791660.model.Folder;
 import de.bht.fpa.mail.s791660.model.applicationLogic.account.AccountManager;
 import de.bht.fpa.mail.s791660.model.applicationLogic.account.AccountManagerIF;
-import de.bht.fpa.mail.s791660.model.applicationLogic.account.TestAccountProvider;
 import de.bht.fpa.mail.s791660.model.applicationLogic.imap.IMapEmailManager;
 import de.bht.fpa.mail.s791660.model.applicationLogic.imap.IMapFolderManager;
 import java.io.File;
@@ -30,8 +27,6 @@ import javax.xml.bind.Marshaller;
 public class ApplicationLogic implements ApplicationLogicIF{
 
     private Folder topFolder;
-    private FolderManagerIF fileManager;
-    private EmailManagerIF mailManager;
     private AccountManagerIF accountManager;
     private FolderManagerIF iMapFolderManager;
     private EmailManagerIF iMapMailManager;
@@ -41,8 +36,6 @@ public class ApplicationLogic implements ApplicationLogicIF{
     
     public ApplicationLogic(Folder f, FXMLDocumentController c){
         this.topFolder = f;
-        this.fileManager = new FileManager(new File(f.getPath()));
-        this.mailManager = new EmailManager(f);
         this.mainController = c;
         this.accountManager = new AccountManager();
     }
@@ -117,8 +110,6 @@ public class ApplicationLogic implements ApplicationLogicIF{
     public void changeDirectory(File file) {
         Folder newFolder = new Folder(file, true);
         this.topFolder = newFolder;
-        this.fileManager = new FileManager(file);
-        this.mailManager = new EmailManager(newFolder);
         this.mainController.initializeNewTree(newFolder);
     }
 
@@ -153,7 +144,6 @@ public class ApplicationLogic implements ApplicationLogicIF{
      */
     private void changeAccount(Folder f){
         this.topFolder = f;
-        this.mailManager = new EmailManager(f);
         this.mainController.initializeTree(f);
     }
 
