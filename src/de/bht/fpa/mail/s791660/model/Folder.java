@@ -1,8 +1,13 @@
 package de.bht.fpa.mail.s791660.model;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Transient;
 
 /**
  *
@@ -10,12 +15,26 @@ import java.util.List;
  *
  */
 
-public class Folder extends Component {
+@Entity
+public class Folder extends Component implements Serializable{
 
-    private final boolean expandable;
-    private final ArrayList<Component> content;
-    private final List<Email> emails;
+    @Id
+    @GeneratedValue
+    private long id;
+    
+    private boolean expandable;
+    @Transient
+    private ArrayList<Component> content;
+    @Transient
+    private List<Email> emails;
 
+    public Folder(){
+        super();
+        this.expandable = true;
+        this.content = new ArrayList<>();
+        this.emails = new ArrayList<>();
+    }
+    
     public Folder(File path, boolean expandable) {
         super(path);
         this.expandable = expandable;
@@ -26,6 +45,10 @@ public class Folder extends Component {
     @Override
     public boolean isExpandable() {
         return expandable;
+    }
+    
+    public void setExpandable(boolean expandable){
+        this.expandable = expandable;
     }
 
     public void addComponent(Component comp) {

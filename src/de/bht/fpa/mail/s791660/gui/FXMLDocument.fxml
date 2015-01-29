@@ -91,9 +91,11 @@
       <MenuBar prefHeight="25.0" prefWidth="900.0">
         <menus>
           <Menu fx:id="accuntMenu" mnemonicParsing="false" text="Account">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
+               <items>
+                  <MenuItem fx:id="newAccountMenuItem" mnemonicParsing="false" text="New Account" />
+                  <MenuItem fx:id="editAccountMenuItem" mnemonicParsing="false" text="Edit Account" />
+                  <Menu fx:id="openAccountMenu" mnemonicParsing="false" text="Open Account" />
+               </items>
           </Menu>
           <Menu fx:id="fileMenu" mnemonicParsing="false" text="File">
             <items>

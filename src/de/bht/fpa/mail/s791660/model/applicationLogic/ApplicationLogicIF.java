@@ -1,5 +1,6 @@
 package de.bht.fpa.mail.s791660.model.applicationLogic;
 
+import de.bht.fpa.mail.s791660.model.Account;
 import de.bht.fpa.mail.s791660.model.Email;
 import de.bht.fpa.mail.s791660.model.Folder;
 import java.io.File;
@@ -59,5 +60,15 @@ public interface ApplicationLogicIF {
      *              should be saved.
      */
     void saveEmails(File file);
+    
+    void openAccount(String name);
+    
+    Account getAccount(String name);
+    
+    void saveAccount(Account acc);
+    
+    void updateAccount(Account acc);
+    
+    List<String> getAllAccounts();
     
 }

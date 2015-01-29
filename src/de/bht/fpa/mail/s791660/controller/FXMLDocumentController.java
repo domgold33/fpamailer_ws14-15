@@ -7,10 +7,13 @@ package de.bht.fpa.mail.s791660.controller;
  */
 
 
+import de.bht.fpa.mail.s791660.model.Account;
 import de.bht.fpa.mail.s791660.model.Component;
 import de.bht.fpa.mail.s791660.model.Email;
 import de.bht.fpa.mail.s791660.model.Folder;
 import de.bht.fpa.mail.s791660.model.applicationLogic.ApplicationLogic;
+import de.bht.fpa.mail.s791660.model.applicationLogic.ApplicationLogicIF;
+import de.bht.fpa.mail.s791660.model.applicationLogic.account.TestAccountProvider;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -21,18 +24,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -57,14 +57,14 @@ public class FXMLDocumentController implements Initializable {
     public final String PATHHISTORY_DEFAULT_MESSAGE = "No recent paths in browsing history.";
     
     private final String DEFAULT_ROOT_PATH = "C:/Users/Dominik/Downloads/AUFGABE4/AUFGABE4/Account";
+    private final String DEFAULT_ACCOUNT = "google-test";
     private final Image FOLDER_CLOSED_ICON = new Image("/images/folder.png", 16, 16, true, false); 
     private final Image FOLDER_OPEN_ICON = new Image("/images/opened_folder.png", 16, 16, true, false);
     
-    private ApplicationLogic applicationLogic; 
+    private ApplicationLogicIF applicationLogic; 
     private Stage pathHistoryStage;
     private List<String> historyList;
-    private ObservableList<Email> tableData; 
-    private DirectoryChooser directoryChooser;
+    private ObservableList<Email> tableData;
     @FXML
     private TreeView<Component> treeView;
     @FXML
@@ -73,6 +73,12 @@ public class FXMLDocumentController implements Initializable {
     private MenuItem openFileMenuItem;
     @FXML
     private MenuItem saveMenuItem;
+    @FXML
+    private MenuItem newAccountMenuItem;
+    @FXML
+    private Menu openAccountMenu;
+    @FXML
+    private MenuItem editAccountMenuItem;
     @FXML
     private TableView<Email> tableView;
     @FXML
@@ -107,7 +113,6 @@ public class FXMLDocumentController implements Initializable {
         // Initializing the TreeView.
         Folder f = new Folder(new File(DEFAULT_ROOT_PATH), true);
         applicationLogic = new ApplicationLogic(f, this);
-        initializeTree(f);
         //Initializing the Menubar.
         initializeMenuBar();
         //Initializing the TableView and its columns.
@@ -127,10 +132,10 @@ public class FXMLDocumentController implements Initializable {
                 newValue.setValue(null);
                 newValue.setValue(f1);
                 tableData.setAll(f1.getEmails());
-                tableView.setItems(tableData);
                 clearDetailedDisplay();
             }
         });
+        applicationLogic.openAccount(DEFAULT_ACCOUNT);
     }  
     
     /***
@@ -138,10 +143,9 @@ public class FXMLDocumentController implements Initializable {
      */
     private void initializeMenuBar(){
         openFileMenuItem.setOnAction((event) ->{
-            try{
-                applicationLogic.changeDirectory(openDirectoryChooser());
-            }catch(NullPointerException e){
-                System.err.println("No directory has been chosen.");
+            File file = openDirectoryChooser();
+            if(file != null){
+                applicationLogic.changeDirectory(file);
             }
         });
         historyMenuItem.setOnAction((event) -> {
@@ -150,16 +154,27 @@ public class FXMLDocumentController implements Initializable {
             }catch(IOException e){
                 System.err.println(e.getMessage());
                 System.err.println("Failed to open dialog.");
-                e.printStackTrace();
             }
         });
         saveMenuItem.setOnAction((event) -> {
+            openSaveDialog();
+        });
+        newAccountMenuItem.setOnAction((event) ->{
             try{
-                openSaveDialog();
-            }catch(NullPointerException e){
-                System.err.println("No directory has been chosen.");
+                openNewAccountWindow();
+            }catch(IOException e){
+                System.err.println(e.getMessage());
+                System.err.println("Failed to open dialog.");
             }
         });
+        for(String accName : applicationLogic.getAllAccounts()){
+            MenuItem account = new MenuItem(accName);
+            openAccountMenu.getItems().add(account);
+            account.setOnAction((event) ->{
+                applicationLogic.openAccount(accName);
+            });
+        }
+        System.out.println(openAccountMenu.getItems().isEmpty());
     }
     
     /***
@@ -199,6 +214,7 @@ public class FXMLDocumentController implements Initializable {
                 fillDetailedDisplay(mail);
             }
         });
+        tableView.setItems(tableData);
     }
           
     /**
@@ -241,7 +257,7 @@ public class FXMLDocumentController implements Initializable {
     /***
      * Initializes the TreeView with the default root path.
      */
-    private void initializeTree(Folder f){
+    public void initializeTree(Folder f){
         TreeItem<Component> root = new TreeItem<>(f);
         root.addEventHandler(TreeItem.branchExpandedEvent(), (event) -> {
             TreeItem<Component> source = (TreeItem) event.getSource();
@@ -323,8 +339,8 @@ public class FXMLDocumentController implements Initializable {
      * @return A newly constructed folder with the chosen directory as its root path.
      * @throws NullPointerException When the dialog is closed and no directory has been chosen.
      */
-    private File openDirectoryChooser() throws NullPointerException{
-        directoryChooser = new DirectoryChooser();
+    private File openDirectoryChooser() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setInitialDirectory(new File("C:/Users/Dominik"));
         Stage stage = new Stage();
         File file = directoryChooser.showDialog(stage);
@@ -351,16 +367,36 @@ public class FXMLDocumentController implements Initializable {
     }
     
     /**
+     * Opens a new window which allows the user to input account data which can then be saved as a new
+     * account.
+     * @throws IOException If the window failed to open. 
+     */
+    private void openNewAccountWindow() throws IOException{
+        URL location = getClass().getResource("/de/bht/fpa/mail/s791660/gui/FXMLNewAccount.fxml");
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(location);
+        loader.setController(new FXMLNewAccountController(this.applicationLogic));
+        AnchorPane root = (AnchorPane) loader.load();
+        Scene scene = new Scene(root);
+        Stage newAccountStage = new Stage();
+        newAccountStage.setScene(scene);
+        newAccountStage.setTitle("New Account");
+        newAccountStage.showAndWait();
+    }
+    
+    /**
      * Opens a directory chooser where the user can choose a directory in which the emails of the
      * currently selected TreeItem's folder will be saved. Called upon activation of the save MenuItem.
      * @throws NullPointerException When the dialog is closed and no directory has been chosen.
      */
-    private void openSaveDialog() throws NullPointerException{
-        directoryChooser = new DirectoryChooser();
-        directoryChooser.setInitialDirectory(new File("C:/Users/Dominik"));
+    private void openSaveDialog() {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setInitialDirectory(new File("C:/Users/Dominik")); //System.getProperties("user.home")
         Stage stage = new Stage();
         File file = directoryChooser.showDialog(stage);
-        applicationLogic.saveEmails(file);
+        if(file != null){
+            applicationLogic.saveEmails(file);
+        }
     }
     
     /***
@@ -383,7 +419,7 @@ public class FXMLDocumentController implements Initializable {
      * Get the ApplicationLogic object that handles the model data.
      * @return The ApplicationLogic object of the controller.
      */
-    public ApplicationLogic getApplicationLogic() {
+    public ApplicationLogicIF getApplicationLogic() {
         return this.applicationLogic;
     }
     

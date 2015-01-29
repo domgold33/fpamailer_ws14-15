@@ -5,12 +5,18 @@
  */
 package de.bht.fpa.mail.s791660.model.applicationLogic;
 
+import de.bht.fpa.mail.s791660.model.applicationLogic.xml.FileManager;
+import de.bht.fpa.mail.s791660.model.applicationLogic.xml.EmailManager;
 import de.bht.fpa.mail.s791660.controller.FXMLDocumentController;
+import de.bht.fpa.mail.s791660.model.Account;
 import de.bht.fpa.mail.s791660.model.Email;
 import de.bht.fpa.mail.s791660.model.Folder;
+import de.bht.fpa.mail.s791660.model.applicationLogic.account.AccountManager;
+import de.bht.fpa.mail.s791660.model.applicationLogic.account.AccountManagerIF;
+import de.bht.fpa.mail.s791660.model.applicationLogic.account.TestAccountProvider;
+import de.bht.fpa.mail.s791660.model.applicationLogic.imap.IMapEmailManager;
+import de.bht.fpa.mail.s791660.model.applicationLogic.imap.IMapFolderManager;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBContext;
@@ -25,14 +31,20 @@ public class ApplicationLogic implements ApplicationLogicIF{
 
     private Folder topFolder;
     private FolderManagerIF fileManager;
-    private EmailManager mailManager;
+    private EmailManagerIF mailManager;
+    private AccountManagerIF accountManager;
+    private FolderManagerIF iMapFolderManager;
+    private EmailManagerIF iMapMailManager;
     private final FXMLDocumentController mainController;
+    
+    private Account currentAccount;
     
     public ApplicationLogic(Folder f, FXMLDocumentController c){
         this.topFolder = f;
         this.fileManager = new FileManager(new File(f.getPath()));
         this.mailManager = new EmailManager(f);
         this.mainController = c;
+        this.accountManager = new AccountManager();
     }
     
     @Override
@@ -42,7 +54,7 @@ public class ApplicationLogic implements ApplicationLogicIF{
 
     @Override
     public void loadContent(Folder folder) {
-        this.fileManager.loadContent(folder);
+        this.iMapFolderManager.loadContent(folder);
     }
     
     /**
@@ -98,7 +110,7 @@ public class ApplicationLogic implements ApplicationLogicIF{
 
     @Override
     public void loadEmails(Folder folder) {
-        this.mailManager.loadEmails(folder);
+        this.iMapMailManager.loadEmails(folder);
     }
 
     @Override
@@ -132,6 +144,49 @@ public class ApplicationLogic implements ApplicationLogicIF{
         }catch(JAXBException e){
             System.err.println(e.getMessage());
         }
+    }
+    
+    /**
+     * Initializes the TreeView with the given folder as its root path after the chosen account has been
+     * changed.
+     * @param f The new root path of the TreeView. 
+     */
+    private void changeAccount(Folder f){
+        this.topFolder = f;
+        this.mailManager = new EmailManager(f);
+        this.mainController.initializeTree(f);
+    }
+
+    @Override
+    public void openAccount(String name) {
+        this.currentAccount = getAccount(name);
+        this.iMapFolderManager = new IMapFolderManager(this.currentAccount);
+        this.iMapMailManager = new IMapEmailManager(this.currentAccount);
+        changeAccount(this.iMapFolderManager.getTopFolder());
+    }
+
+    @Override
+    public Account getAccount(String name) {
+        return this.accountManager.getAccount(name);
+    }
+
+    @Override
+    public void saveAccount(Account acc) {
+        this.accountManager.saveAccount(acc);
+    }
+
+    @Override
+    public void updateAccount(Account acc) {
+        this.accountManager.updateAccount(acc);
+    }
+
+    @Override
+    public List<String> getAllAccounts() {
+        List<String> list = new ArrayList<>();
+        for(Account acc : this.accountManager.getAllAccounts()){
+            list.add(acc.getName());
+        }
+        return list;
     }
     
 }

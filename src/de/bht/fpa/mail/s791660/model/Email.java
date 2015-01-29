@@ -190,7 +190,7 @@ public class Email {
     
     public void setSent(String date) {
         try {
-            received = FORMAT.parse(date);
+            sent = FORMAT.parse(date);
         } catch (ParseException ex) {
             Logger.getLogger(Email.class.getName()).log(Level.SEVERE, null, ex);
         }

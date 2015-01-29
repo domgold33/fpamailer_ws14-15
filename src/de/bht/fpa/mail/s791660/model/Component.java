@@ -6,16 +6,32 @@
 package de.bht.fpa.mail.s791660.model;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
 
 /**
  *
  * @author Dominik
  */
-public abstract class Component {
+@Entity
+@Inheritance
+public abstract class Component implements Serializable{
+    
+    @Id
+    @GeneratedValue
+    private long id;
     
     private String path;
     private String name;
+    
+    public Component(){
+        this.path = "";
+        this.name = "";
+    }
     
     public Component(File f){
         this.path = f.getAbsolutePath();
