@@ -159,10 +159,18 @@ public class ApplicationLogic implements ApplicationLogicIF{
 
     @Override
     public void openAccount(String name) {
+        Account temp = this.currentAccount;
         this.currentAccount = getAccount(name);
         this.iMapFolderManager = new IMapFolderManager(this.currentAccount);
         this.iMapMailManager = new IMapEmailManager(this.currentAccount);
-        changeAccount(this.iMapFolderManager.getTopFolder());
+        Folder folder = this.iMapFolderManager.getTopFolder();
+        if(folder != null){
+            changeAccount(folder);
+        }else{
+            this.currentAccount = temp;
+            this.iMapFolderManager = new IMapFolderManager(this.currentAccount);
+            this.iMapMailManager = new IMapEmailManager(this.currentAccount);
+        }
     }
 
     @Override

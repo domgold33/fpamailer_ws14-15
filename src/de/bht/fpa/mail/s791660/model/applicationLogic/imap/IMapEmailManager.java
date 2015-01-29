@@ -20,14 +20,25 @@ import javax.mail.Store;
 public class IMapEmailManager implements EmailManagerIF{
 
     private Account account;
+    private Store store;
     
     public IMapEmailManager(Account account){
         this.account = account;
+        this.store = IMapConnectionHelper.connect(account);
     }
     
     @Override
     public Folder getFolder() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try{
+            javax.mail.Folder topFolder = store.getDefaultFolder();  
+            Folder top = new Folder();
+            top.setName(topFolder.getName());
+            top.setPath(topFolder.getFullName());
+            return top;
+        }catch(MessagingException e){
+            System.err.println(e.getMessage());
+        }
+        return null;
     }
 
     @Override
@@ -35,13 +46,17 @@ public class IMapEmailManager implements EmailManagerIF{
         if(!f.getEmails().isEmpty()){
             return;
         }
-        Store store = IMapConnectionHelper.connect(account);
         try{
-            Message[] messages = store.getFolder(f.getName()).getMessages();
+            javax.mail.Folder folder = store.getFolder(f.getName());
+            if(!folder.isOpen()){
+                folder.open(javax.mail.Folder.READ_ONLY);
+            }
+            Message[] messages = folder.getMessages();
             for(Message message : messages){
                 Email mail = IMapEmailConverter.convertMessage(message);
                 f.addEmail(mail);
             }
+            folder.close(true);
         }catch(MessagingException e){
             System.err.println(e.getMessage());
         }

@@ -70,11 +70,10 @@ public class Folder extends Component implements Serializable{
 
     @Override
     public String toString() {
-        File file = new File(this.getPath());
         if(emails.isEmpty()){
-            return file.getName();
+            return this.getName();
         }
-        return file.getName() + "  (" + emails.size() + ")";
+        return this.getName() + "  (" + emails.size() + ")";
     }
     
  }

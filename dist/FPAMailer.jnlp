@@ -11,7 +11,7 @@
   </resources>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="FPAMailer.jar" size="73403" download="eager" />
+    <jar href="FPAMailer.jar" size="73682" download="eager" />
     <jar href="lib/dsn.jar" size="19171" download="eager" />
     <jar href="lib/eclipselink.jar" size="8384130" download="eager" />
     <jar href="lib/gimap.jar" size="14769" download="eager" />

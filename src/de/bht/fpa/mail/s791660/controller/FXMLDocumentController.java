@@ -78,7 +78,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private Menu openAccountMenu;
     @FXML
-    private MenuItem editAccountMenuItem;
+    private Menu editAccountMenu;
     @FXML
     private TableView<Email> tableView;
     @FXML
@@ -174,7 +174,6 @@ public class FXMLDocumentController implements Initializable {
                 applicationLogic.openAccount(accName);
             });
         }
-        System.out.println(openAccountMenu.getItems().isEmpty());
     }
     
     /***
@@ -375,7 +374,20 @@ public class FXMLDocumentController implements Initializable {
         URL location = getClass().getResource("/de/bht/fpa/mail/s791660/gui/FXMLNewAccount.fxml");
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(location);
-        loader.setController(new FXMLNewAccountController(this.applicationLogic));
+        loader.setController(new FXMLNewAccountController(this.applicationLogic, this));
+        AnchorPane root = (AnchorPane) loader.load();
+        Scene scene = new Scene(root);
+        Stage newAccountStage = new Stage();
+        newAccountStage.setScene(scene);
+        newAccountStage.setTitle("New Account");
+        newAccountStage.showAndWait();
+    }
+    
+    private void openEditAccountWindow(String accName) throws IOException{
+        URL location = getClass().getResource("/de/bht/fpa/mail/s791660/gui/FXMLEditAccount.fxml");
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(location);
+        loader.setController(new FXMLNewAccountController(this.applicationLogic, this));
         AnchorPane root = (AnchorPane) loader.load();
         Scene scene = new Scene(root);
         Stage newAccountStage = new Stage();
@@ -396,6 +408,32 @@ public class FXMLDocumentController implements Initializable {
         File file = directoryChooser.showDialog(stage);
         if(file != null){
             applicationLogic.saveEmails(file);
+        }
+    }
+    
+    /**
+     * Loads all existing accounts from the database and appends them to the openAccountMenu and the 
+     * editAccountMenu.
+     */
+    public void loadAccounts(){
+        this.openAccountMenu.getItems().clear();
+        this.editAccountMenu.getItems().clear();
+        for(String accName : applicationLogic.getAllAccounts()){
+            MenuItem account = new MenuItem(accName);
+            MenuItem account2 = new MenuItem(accName);
+            openAccountMenu.getItems().add(account);
+            editAccountMenu.getItems().add(account2);
+            account.setOnAction((event) ->{
+                applicationLogic.openAccount(accName);
+            });
+            account2.setOnAction((event) ->{
+                try{
+                    openEditAccountWindow(accName);
+                }catch(IOException e){
+                    System.err.println(e.getMessage());
+                    System.err.println("Failed to open dialog.");
+                }
+            });
         }
     }
     

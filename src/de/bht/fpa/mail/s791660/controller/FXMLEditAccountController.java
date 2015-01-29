@@ -6,7 +6,6 @@
 package de.bht.fpa.mail.s791660.controller;
 
 import de.bht.fpa.mail.s791660.model.Account;
-import de.bht.fpa.mail.s791660.model.applicationLogic.ApplicationLogicIF;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -17,23 +16,22 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 /**
- * FXML Controller class
  *
  * @author Dominik
  */
-public class FXMLNewAccountController implements Initializable {
-
-    private ApplicationLogicIF appLogic;
+public class FXMLEditAccountController implements Initializable{
+    
     private FXMLDocumentController mainController;
+    private Account account;
     
     @FXML
-    private TextField accountName;
+    private TextField nameTextfield;
     @FXML
-    private TextField accountHost;
+    private TextField hostTextfield;
     @FXML
-    private TextField accountUsername;
+    private TextField usernameTextfield;
     @FXML
-    private TextField accountPassword;
+    private TextField passwordTextfield;
     @FXML
     private Label errorMessage;
     @FXML
@@ -41,23 +39,25 @@ public class FXMLNewAccountController implements Initializable {
     @FXML
     private Button cancelButton;
     
-    public FXMLNewAccountController(ApplicationLogicIF appLogic, FXMLDocumentController mainController){
-        this.appLogic = appLogic;
+    public FXMLEditAccountController(FXMLDocumentController mainController, String accName){
         this.mainController = mainController;
+        this.account = mainController.getApplicationLogic().getAccount(accName);
     }
-    
-    /**
-     * Initializes the controller class.
-     */
+
     @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+    public void initialize(URL location, ResourceBundle resources) {       
+        nameTextfield.setText(account.getName());
+        nameTextfield.setEditable(false);
+        hostTextfield.setText(account.getHost());
+        usernameTextfield.setText(account.getUsername());
+        passwordTextfield.setText(account.getPassword());
         saveButton.setOnAction((event) ->{
-            if(!accountName.getText().isEmpty() && !accountHost.getText().isEmpty() && 
-                !accountUsername.getText().isEmpty() && !accountPassword.getText().isEmpty()){
-                Account account = new Account(accountName.getText(), accountHost.getText(),
-                                                accountUsername.getText(), accountPassword.getText());
-                appLogic.saveAccount(account);
+            if(!nameTextfield.getText().isEmpty() && !hostTextfield.getText().isEmpty() && 
+                !usernameTextfield.getText().isEmpty() && !passwordTextfield.getText().isEmpty()){
+                account.setHost(this.hostTextfield.getText());
+                account.setUsername(this.usernameTextfield.getText());
+                account.setPassword(this.passwordTextfield.getText());
+                mainController.getApplicationLogic().updateAccount(account);
                 this.mainController.loadAccounts();
                 Stage stage = (Stage) this.cancelButton.getScene().getWindow();
                 stage.close();
@@ -69,6 +69,6 @@ public class FXMLNewAccountController implements Initializable {
             Stage stage = (Stage) this.cancelButton.getScene().getWindow();
             stage.close();
         });
-    }    
+    }
     
 }
