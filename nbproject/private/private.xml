@@ -5,24 +5,12 @@
             <url>src/de/bht/fpa/mail/s791660/controller/FXMLDocumentController.java</url>
             <bookmark id="1">
                 <name/>
-                <line>68</line>
+                <line>69</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/Dominik/Documents/NetBeansProjects/FPAMailer/src/de/bht/fpa/mail/s791660/controller/FXMLPathHistoryController.java</file>
-            <file>file:/C:/Users/Dominik/Documents/NetBeansProjects/FPAMailer/src/de/bht/fpa/mail/s791660/controller/FXMLDocumentController.java</file>
-            <file>file:/C:/Users/Dominik/Documents/NetBeansProjects/FPAMailer/src/de/bht/fpa/mail/s791660/model/applicationLogic/account/AccountDAOIF.java</file>
-            <file>file:/C:/Users/Dominik/Documents/NetBeansProjects/FPAMailer/src/de/bht/fpa/mail/s791660/gui/FXMLNewAccount.fxml</file>
-            <file>file:/C:/Users/Dominik/Documents/NetBeansProjects/FPAMailer/src/de/bht/fpa/mail/s791660/model/applicationLogic/ApplicationLogic.java</file>
-            <file>file:/C:/Users/Dominik/Documents/NetBeansProjects/FPAMailer/src/de/bht/fpa/mail/s791660/model/applicationLogic/account/AccountFileDAO.java</file>
-            <file>file:/C:/Users/Dominik/Documents/NetBeansProjects/FPAMailer/src/de/bht/fpa/mail/s791660/model/applicationLogic/account/TestAccountProvider.java</file>
-            <file>file:/C:/Users/Dominik/Documents/NetBeansProjects/FPAMailer/src/de/bht/fpa/mail/s791660/model/applicationLogic/account/AccountManager.java</file>
-            <file>file:/C:/Users/Dominik/Documents/NetBeansProjects/FPAMailer/src/de/bht/fpa/mail/s791660/model/applicationLogic/account/AccountManagerIF.java</file>
-            <file>file:/C:/Users/Dominik/Documents/NetBeansProjects/FPAMailer/src/de/bht/fpa/mail/s791660/controller/FXMLNewAccountController.java</file>
-            <file>file:/C:/Users/Dominik/Documents/NetBeansProjects/FPAMailer/src/de/bht/fpa/mail/s791660/model/Account.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

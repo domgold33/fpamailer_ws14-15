@@ -2,9 +2,8 @@ package de.bht.fpa.mail.s791660.model.applicationLogic.imap;
 
 import de.bht.fpa.mail.s791660.model.Account;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.mail.AuthenticationFailedException;
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Store;
 
@@ -33,8 +32,8 @@ public class IMapConnectionHelper {
                 return store;
         } catch (final AuthenticationFailedException ex) {
             System.out.println("Authentifizierung ist fehlgeschlagen.");
-        } catch (Exception ex) {
-            Logger.getLogger(IMapConnectionHelper.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (final MessagingException ex){
+            System.out.println(ex.getMessage());
         }
         return null;
     }

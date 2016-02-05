@@ -19,7 +19,7 @@ public class FPAMailer extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/de/bht/fpa/mail/s791660/gui/FXMLDocument.fxml"));
+        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("/de/bht/fpa/mail/s791660/gui/FXMLDocument.fxml"));
         
         Scene scene = new Scene(root);
 
